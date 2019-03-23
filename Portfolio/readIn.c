@@ -2,8 +2,11 @@
 #include <string.h>
 #include <stdlib.h> // For exit() function
 
+#include "readIn.h"
+#include "blankAVL.h"
 
-void readIn(){
+Node *readIn(){
+    printf("Got to read funcntion\n");
     //stuff for reading
     static const char filename[] = "movie_records2";
     char line[128]; /* or other suitable maximum line size */
@@ -43,11 +46,12 @@ void readIn(){
                 tokenCount++;
             }
             tokenCount = 1;
-            insert(root, title, releaseYear, runTime, genre);
+            root = insert(root, title, releaseYear, runTime, genre);
         }
         fclose(file);
     }
     else{
         perror(filename); /* why didn't the file open? */
     }
+    return root;
 }

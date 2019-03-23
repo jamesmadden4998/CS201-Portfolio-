@@ -125,11 +125,11 @@ Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
 
 
 	if (strcmp(tempMovie,tempNodeTitle) < 0){
-		node->left = insert(node->left, movie);
+		node->left = insert(node->left, movie, release, rt, genre);
 	}
 
 	else if (strcmp(tempMovie,tempNodeTitle) >= 0){
-		node->right = insert(node->right, movie);
+		node->right = insert(node->right, movie, release, rt, genre);
 	}
 	/*else // Equal keys are not allowed in BST
 		return node;*/

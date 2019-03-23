@@ -3,31 +3,26 @@
 #include<string.h>
 #include<ctype.h>
 
-#include "blankAVL.h"
-
+//#include "blankAVL.h"
+//#include "readIn.h"
 
 int main(){
-    Node *root = NULL;
 
-    /* Constructing tree given in the above figure */
-    root = insert(root, "James");
-    root = insert(root, "ryan");
-    root = insert(root, "Evan");
-    root = insert(root, "john");
-    root = insert(root, "Louis");
-    root = insert(root, "Trez");
+    char buffer[150];
+    printf("Enter the name of the list you wish to create/edit:\n");
+    scanf("%[^\n]s", buffer);
+    printf("You entered: %s\n", buffer);
+    FILE *fp;
+    fp = fopen(buffer, "w");
+    fprintf(fp, "%s\n", buffer);
+    fclose(fp);
 
-    /* The constructed AVL Tree would be
-    			30
-    		/ \
-    		20 40
-    		/ \	 \
-    	10 25 50
-    */
 
-    printf("Preorder traversal of the constructed AVL"
-    		" tree is \n");
-    preOrder(root);
+
+    /*Node *root = NULL;
+    root = readIn();
+    preOrder(root);*/
+
 
 return 0;
 }
