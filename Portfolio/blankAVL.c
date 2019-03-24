@@ -189,3 +189,44 @@ void preOrder(Node *root)
 		preOrder(root->right);
 	}
 }
+
+void printNode(Node *root);
+
+Node *searchFor(Node *root, char movie[]){
+
+	while (root != NULL){
+		if (strcmp(movie,root->title) == 0){
+			printf("%s\t%s\n", movie, root->title);
+		   	printf("key found\n");
+		   	//return;
+			//printNode(root);
+			return root;
+	   	}
+		else if(strcmp(movie, root->title) < 0){
+			printf("LEFT\n");
+	   		root = root->left;
+		}
+		else if(strcmp(movie, root->title) > 0){
+			printf("RIGHT\n");
+			root = root->right;
+		}
+	}
+	//printf("Key not found\n");
+	//return;
+
+
+}
+
+void printNode(Node *root){
+	printf("Title: %s\n", root->title);
+    printf("\tRelease year: %s\n", root->releaseYear);
+    printf("\tRuntime: %s\n", root->runTime);
+    printf("\tGenre: %s\n", root->genre);
+}
+
+void printNodeFile(FILE *fp, Node *root){
+	fprintf(fp, "Title: %s\n", root->title);
+    fprintf(fp, "\tRelease year: %s\n", root->releaseYear);
+    fprintf(fp, "\tRuntime: %s\n", root->runTime);
+    fprintf(fp, "\tGenre: %s\n", root->genre);
+}

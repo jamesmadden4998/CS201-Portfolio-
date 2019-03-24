@@ -13,5 +13,6 @@ typedef struct node Node;
  char *LOW(char *);
  Node *insert(Node *, char [], char [], char[], char[]);
  void preOrder(Node *);
+ Node *searchFor(Node *, char []);
 
 #endif

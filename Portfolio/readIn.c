@@ -6,7 +6,6 @@
 #include "blankAVL.h"
 
 Node *readIn(){
-    printf("Got to read funcntion\n");
     //stuff for reading
     static const char filename[] = "movie_records2";
     char line[128]; /* or other suitable maximum line size */
