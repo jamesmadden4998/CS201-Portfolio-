@@ -15,7 +15,7 @@ int main(){
     char lookup[150];
     char command[50] = "none";
 
-    printf("Enter the name of the list you wish to create/edit:\n");
+    printf("Enter the name of the list you wish to create/edit:");
     scanf("%[^\n]s", buffer);
     printf("You entered: %s\n\n", buffer);
 
@@ -23,12 +23,13 @@ int main(){
         printf("To view the contents of this list enter 'print'\n");
         printf("To search for a title to add to the list enter'add'\n");
         printf("Enter 'q' to exit program\n");
+        printf("->");
         scanf(" %[^\n]s", command);
         if(strcmp(command,"print") == 0){
             char line[128];
             FILE *fptr = fopen(buffer, "r");
             while(fgets(line, sizeof(line), fptr) != NULL){
-                printf("%s\n", line);
+                printf("%s", line);
             }
             fclose(fptr);
         }
@@ -42,7 +43,7 @@ int main(){
             char c;
             scanf(" %c", &c);
             if(c == 'Y' || c == 'y'){
-                FILE *fp = fopen(buffer, "w");
+                FILE *fp = fopen(buffer, "a");
                 printNodeFile(fp, found);
                 fclose(fp);
             }
