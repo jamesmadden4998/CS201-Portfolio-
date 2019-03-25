@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
+#include<stdbool.h>
 
 #include "blankAVL.h"
 
@@ -111,6 +112,52 @@ char *LOW(char *string){
 	return temp;
 }
 
+char *leadArticle(char title[]){
+
+    char *article = malloc(4 * sizeof(char));
+    int i = 0;
+    const char *the = malloc(4 * sizeof(char));
+	the = "the";
+    const char *and = malloc(4 * sizeof(char));
+	and = "and";
+    const char *a = malloc(2 * sizeof(char));
+	a = "a";
+    for(i; i<3; i++){
+        article[i] = title[i];
+        if(i == 0 && (strcmp(article,a)==0)){
+            return article;
+        }
+        else if((i == 2)&&((strcmp(article,and)==0)||(strcmp(article,the)==0))){
+            return article;
+        }
+	}
+	char *error = malloc(8 * sizeof(char));
+	error = "error";
+	return error;
+}
+
+char *clipArticle(char string[], char art[]){
+	int f = 4;
+	int a = 2;
+	int num = strlen(string) - 3;
+	char *tempString = malloc(num * sizeof(char));
+	if(strcmp(art,"a") == 0){
+		for(a; a<strlen(string); a++){
+			tempString[a-2] = string[a];
+			return tempString;
+		}
+	}
+	else if(strcmp(art,"error") == 0){
+		return "error";
+	}
+	else{
+		for(f; f<strlen(string); f++){
+			tempString[f-4] = string[f];
+			return tempString;
+		}
+	}
+}
+
 // Recursive function to insert a key in the subtree rooted
 // with node and returns the new root of the subtree.
 Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
@@ -118,11 +165,22 @@ Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
 	if (node == NULL)
 		return(newNode(movie, release, rt, genre));
 
+
 	char *tempMovie = malloc(200 * sizeof(char));
 	char *tempNodeTitle = malloc(200*sizeof(char));
 	tempMovie = LOW(movie);
 	tempNodeTitle = LOW(node->title);
 
+	char tempArt[8] = " ";
+	char tempArt2[8] = " ";
+
+
+	if(strcmp(strcpy(tempArt,leadArticle(tempMovie)),"error") != 0){
+		tempMovie = clipArticle(tempMovie, tempArt);
+	}
+	if(strcmp(strcpy(tempArt2,leadArticle(tempNodeTitle)),"error") != 0){
+		tempNodeTitle = clipArticle(tempNodeTitle, tempArt2);
+	}
 
 	if (strcmp(tempMovie,tempNodeTitle) < 0){
 		node->left = insert(node->left, movie, release, rt, genre);
@@ -193,32 +251,49 @@ void preOrder(Node *root)
 void printNode(Node *root);
 
 Node *searchFor(Node *root, char movie[]){
+	char *Movie = malloc(200 * sizeof(char));
+	char *NodeTitle = malloc(200*sizeof(char));
+	Movie = LOW(movie);
+	NodeTitle = LOW(root->title);
 
-	while (root != NULL){
-		if (strcmp(movie,root->title) == 0){
-			return root;
-	   	}
-		else if(strcmp(movie, root->title) < 0){
-	   		root = root->left;
-		}
-		else if(strcmp(movie, root->title) > 0){
-			root = root->right;
-		}
+	Node *temp = root;
+
+	char article[10];
+	char article2[10];
+
+	if(strcmp(strcpy(article,leadArticle(Movie)),"error") != 0){
+		Movie = clipArticle(Movie, article);
 	}
-	printf("Movie not found\n");
+	if(strcmp(strcpy(article2,leadArticle(NodeTitle)),"error") != 0){
+		NodeTitle = clipArticle(NodeTitle, article2);
+	}
+
+	// while (root != NULL){
+		if (strcmp(Movie,NodeTitle) == 0){
+			return temp;
+	   	}
+		else if(strcmp(Movie, NodeTitle) < 0){
+	   		temp = searchFor(root->left, Movie);
+		}
+		else if(strcmp(Movie, NodeTitle) > 0){
+			temp = searchFor(root->right, Movie);
+		}
+	//}
+	// Node *error = NULL;
+	// return error;
 
 }
 
 void printNode(Node *root){
-	printf("Title: %s", root->title);
-    printf("\tRelease year: %s", root->releaseYear);
-    printf("\tRuntime: %s", root->runTime);
-    printf("\tGenre: %s", root->genre);
+	printf("Title: %s\n", root->title);
+    printf("\tRelease year: %s\n", root->releaseYear);
+    printf("\tRuntime: %s\n", root->runTime);
+    printf("\tGenre: %s\n", root->genre);
 }
 
 void printNodeFile(FILE *fp, Node *root){
-	fprintf(fp, "Title: %s", root->title);
-    fprintf(fp, "\tRelease year: %s", root->releaseYear);
-    fprintf(fp, "\tRuntime: %s", root->runTime);
-    fprintf(fp, "\tGenre: %s", root->genre);
+	fprintf(fp, "Title: %s\n", root->title);
+    fprintf(fp, "\tRelease year: %s\n", root->releaseYear);
+    fprintf(fp, "\tRuntime: %s\n", root->runTime);
+    fprintf(fp, "\tGenre: %s\n\n", root->genre);
 }
