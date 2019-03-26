@@ -50,6 +50,8 @@ int main(){
     }
     fclose(ListN);
 
+    char errand;
+
     while(command != 9){
 
         if(command == 7 || command == 0){
@@ -57,8 +59,22 @@ int main(){
             promptInitial();
         }
 
+        else if(command == 1){
+            int r = 0;
+            if(count == 0){
+                printf("There currently are no made lists.\n");
+            }
+            else{
+                for(r; r<count; r++){
+                    printf("%s", arrayoflists[r]);
+                }
+                printf("\n");
+            }
+            resetCommand();
+            promptInitial();
+        }
+
         else if(command == 2){
-            char errand;
             printf("Enter the title of the list you wish ot Create or Edit.\n");
             printf("->");
             scanf(" %[^\n]s", listTitle);
@@ -92,13 +108,56 @@ int main(){
                     FILE *fp = fopen("ListNames", "w");
                     int h = 0;
                     for(h; h<count; h++){
-                        fprintf(fp, "%s\n", arrayoflists[h]);
+                        fprintf(fp, "%s", arrayoflists[h]);
                     }
                     fclose(fp);
                 }
             }
             resetCommand();
             promptSecond();
+        }
+        else if (command == 3){
+            printf("Enter the the name of the list you wish to Delete:\n");
+            printf("->");
+            scanf(" %[^\n]s", lookup);
+            errand = getchar();
+            printf("Your varible (lookup) = %s\n",lookup);
+            char *lowerLookup = malloc(100*sizeof(char));
+            char *lowerCompare = malloc(100*sizeof(char));
+
+            strcpy(lowerLookup, LOW(lookup));
+            int exists = 0;
+            int index = 0;
+            while(arrayoflists[index] != NULL){
+                //printf("In while...\n");
+                //strcpy(lowerCompare, LOW(arrayoflists[index]));
+                if(strcmp(lookup,arrayoflists[index])==0){
+                    printf("The List Exists\n");
+                    exists = 1;
+                    break;
+                }
+                if(index > count)break;
+                index++;
+            }
+            index--;
+            if(exists == 1){
+                for(index; index<count; index++){
+                    strcpy(arrayoflists[index], arrayoflists[index+1]);
+                }
+                int status = remove(listTitle);
+                if(status == 0){
+                    printf("file was successfully deleted\n");
+                }
+                else{
+                    printf("The file was not deleted\n");
+                    perror("This was the error\n");
+                }
+            }
+            else if(exists != 1 ){
+                printf("The list you are looking for DNE.\n");
+                resetCommand();
+                promptInitial();
+            }
         }
         else if(command == 4){
             char line[128];
@@ -144,18 +203,12 @@ int main(){
             resetCommand();
             promptSecond();
         }
-        else if(command == 1){
-            int r = 0;
-            if(count == 0){
-                printf("There currently are no made lists.\n");
-            }
-            else{
-                for(r; r<count; r++){
-                    printf("%s\n", arrayoflists[r]);
-                }
-            }
-            resetCommand();
-            promptInitial();
+        else if(command == 6){
+            // DELETE MOVIE FROM FOUND LIST
+        }
+        else if (command != 1||2||3||4||5||6||7||9){
+            printf("INVALID INPUT... returning to top\n\n");
+            command = 7;
         }
     }
 
