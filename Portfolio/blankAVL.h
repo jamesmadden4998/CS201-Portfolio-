@@ -14,7 +14,6 @@ typedef struct node Node;
  Node *insert(Node *, char [], char [], char[], char[]);
  void preOrder(Node *);
  Node *searchFor(Node *, char []);
- char *leadArticle(char []);
- char *clipArticle(char [], char []);
+ char *clipArticle(char []);
 
 #endif
