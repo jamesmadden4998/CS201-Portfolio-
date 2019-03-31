@@ -13,7 +13,13 @@ typedef struct node Node;
  char *LOW(char *);
  Node *insert(Node *, char [], char [], char[], char[]);
  void preOrder(Node *);
- Node *searchFor(Node *, char []);
+ void preOrderFile(Node *);
+ void printNode(Node *);
+ void printNodeFile(FILE *, Node *);
+ int searchGeneral(Node *, char []);
+ Node *searchSpecific(Node *, char[]);
  char *clipArticle(char []);
+ Node *del(Node *, Node *);
+ Node *deleteNode(Node*, Node *);
 
 #endif

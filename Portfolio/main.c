@@ -35,21 +35,24 @@ void resetCommand(){
 int main(){
 
     Node *root;
-    root = readIn();
+    root = readIn("movie_records2");
 
-    int count = 0;
+    // preOrder(root);
+
+    Node *currLists;
+    currLists = readIn("ListNames");
+    // preOrder(root);
+
+    // printf("\n\n");
+    // printNode(currLists);
+    // printf("\n\n");
+
+    // preOrder(currLists);
+
     char listTitle[150];
     char lookup[150];
 
     char arrayoflists[100][100];
-    char inLine[128];
-    FILE *ListN = fopen("ListNames", "r");
-    while(fgets(inLine, sizeof(inLine), ListN) != NULL){
-        inLine[strlen(inLine)-1] = '\0';
-        strcpy(arrayoflists[count], inLine);
-        count++;
-    }
-    fclose(ListN);
 
     char errand;
 
@@ -59,167 +62,195 @@ int main(){
             resetCommand();
             promptInitial();
         }
-
         else if(command == 1){
             int r = 0;
-            if(count == 0){
+            if(currLists == NULL){
                 printf("\nThere currently are no made lists.\n\n");
             }
             else{
-                for(r; r<count; r++){
-                    printf("%s\n", arrayoflists[r]);
-                }
+                preOrder(currLists);
                 printf("\n");
             }
             resetCommand();
             promptInitial();
         }
-
         else if(command == 2){
-
-            int key = 0;
             int i;
-
-            char *listname = malloc(100 * sizeof(char));
-            char *compare = malloc(100 * sizeof(char));
-
             printf("Enter the title of the list you wish to Create or Edit.\n");
             printf("->");
             scanf(" %[^\n]s", listTitle);
-            strcpy(listname, LOW(listTitle));
-
-            while(arrayoflists[i] != NULL){
-                //printf("In while...\n");
-                strcpy(compare, LOW(arrayoflists[i]));
-                if(strcmp(listname,compare) == 0){
-                    printf("The List Exists\n");
-                    key = 34;
-                    break;
-                }
-                if(i > count)break;
-                i++;
-            }
-            i--;
-
-            if (key != 34){
-                int input;
-                printf("The list does not exist yet. Would you like to create it?\n");
-                printf("Enter (1) for Yes\n");
-                printf("Enter (2) for No\n");
+            Node *foundList;
+            foundList = searchSpecific(currLists, listTitle);
+            printNode(foundList);
+            if(foundList == NULL){
+                printf("%s was not found\n", listTitle);
+                printf("Enter (1) to create this list\n");
+                printf("Enter (2) to search for a different list\n");
                 printf("->");
-                scanf("%d", &input);
-                if(input == 1){
-                    count++;
-                    strcpy(arrayoflists[i], listTitle);
-                    FILE *fp = fopen("ListNames", "w");
-                    int h = 0;
-                    for(h; h<count; h++){
-                        fprintf(fp, "%s\n", arrayoflists[h]);
-                    }
-                    fclose(fp);
+                scanf("%d", &i);
+                if(i == 1){
+                    currLists = insert(currLists, listTitle, " ", " ", " ");
+                    preOrderFile(currLists);
+                    resetCommand();
+                    promptSecond();
                 }
-                else{
-                    printf("\nThe list was not created.\n\n");
+                else if(i == 2){
                     resetCommand();
                     promptInitial();
                 }
             }
-            resetCommand();
-            promptSecond();
+            else if(foundList != NULL){
+                printf("The list that was found was: ");
+                printNode(foundList);
+                printf("\n");
+                printf("Enter (1) to edit this list\n");
+                printf("Enter (2) to search for a different list\n");
+                printf("->");
+                scanf("%d", &i);
+                if(i == 1){
+                    resetCommand();
+                    promptSecond();
+                }
+                else{
+                    resetCommand();
+                    promptInitial();
+                }
+            }
         }
         else if (command == 3){
             printf("Enter the the name of the list you wish to Delete:\n");
             printf("->");
             scanf(" %[^\n]s", lookup);
-            errand = getchar();
-            printf("Your varible (lookup) = %s\n",lookup);
-            char *lowerLookup = malloc(100*sizeof(char));
-            char *lowerCompare = malloc(100*sizeof(char));
-            FILE *fpoint;
-            strcpy(lowerLookup, LOW(lookup));
-            int exists = 0;
-            int index = 0;
-            while(arrayoflists[index] != NULL){
-                //printf("In while...\n");
-                strcpy(lowerCompare, LOW(arrayoflists[index]));
-                if(strcmp(lowerLookup,lowerCompare)==0){
-                    printf("The List Exists\n");
-                    for(index; index<count; index++){
-                        strcpy(arrayoflists[index], arrayoflists[index+1]);
-                    }
-                    strcpy(arrayoflists[count],"\0");
-                    fpoint = fopen(listTitle, "r");
-                    exists = 1;
-                    break;
-                }
-                if(index > count)break;
-                index++;
-            }
-            index--;
-            if(fpoint == NULL){
-                if(exists != 1 ){
-                    printf("The list you are looking for DNE.\n");
-                }
-                resetCommand();
-                promptInitial();
-            }
-            else{
-                if(remove(listTitle)==0){
-                    printf("file was successfully deleted\n");
-                    resetCommand();
-                    promptInitial();
+            int confirm;
+            Node *findList;
+            findList = searchSpecific(currLists, lookup);
+            if(findList != NULL){
+                printf("We found the list: ");
+                printNode(findList);
+                printf("Enter (1) to confirm deletion.\n");
+                printf("Enter (2) to abort\n");
+                printf("->");
+                scanf("%d", &confirm);
+                if(confirm == 1){
+                    deleteNode(currLists, findList);
+                    preOrderFile(currLists);
+                    int status;
+                	status = remove(lookup);
+                	if (status==0){
+                		printf("list was successfully deleted\n");
+                	}
                 }
                 else{
-                    printf("The file was not deleted\n");
-                    perror("This was the error\n");
-                    resetCommand();
-                    promptInitial();
+                    printf("Deletion of %s aborted\n", lookup);
                 }
             }
+            else{
+                printf("%s was not found\n", lookup);
+                printNode(findList);
+            }
+            resetCommand();
+            promptInitial();
         }
         else if(command == 4){
             char line[128];
-            FILE *fptr = fopen(listTitle, "r");
-            if(fptr == NULL){
-                printf("list is empty\n");
-                fclose(fptr);
-                exit(1);
+            FILE *fptr;
+            int nullcheck = -1;
+            if(fptr = fopen(listTitle, "r")){
+                nullcheck = 1;
             }
-            else{
+            if(nullcheck == 1){
                 while(fgets(line, sizeof(line), fptr) != NULL){
                     printf("%s", line);
                 }
                 fclose(fptr);
             }
+            else{
+                printf("list is empty\n");
+                fclose(fptr);
+                // exit(1);
+            }
+            resetCommand();
             promptSecond();
         }
         else if(command == 5){
             printf("Enter the title you want to search for:\n->");
             scanf(" %[^\n]s", lookup);
             printf("You entered: %s\n", lookup);
-            Node *found = searchFor(root, lookup);
-            if(found != NULL){
-                printNode(found);
-                printf("Are you you sure you want to add this to your list? (Y/N)\n");
-                printf("->");
-                char c;
-                scanf(" %c", &c);
-                if(c == 'Y' || c == 'y'){
-                    FILE *fp = fopen(listTitle, "a");
-                    printNodeFile(fp, found);
-                    fclose(fp);
+            int search;
+            int yesOno = -1;
+            Node *specific = NULL;
+            search = searchGeneral(root, lookup);
+            if(search == 0){
+                printf("Enter the full Title of the movie you wish to add\n->");
+                scanf(" %[^\n]s", lookup);
+                specific = searchSpecific(root, lookup);
+                if(specific != NULL){
+                    printNode(specific);
+                    printf("Is this ^ the movie you were looking for?\n");
+                    printf("Enter (1) for 'Yes'.\n");
+                    printf("Enter (2) for 'No'.\n");
+                    printf("->");
+                    scanf("%d", &yesOno);
+                    int nullcheck = -1;
+                    if(yesOno == 1){
+                        // int fileLine;
+                        FILE *fp;
+                        if(fp = fopen(listTitle, "r")){
+                            fclose(fp);
+                            nullcheck = 1;
+                        }
+                        if(nullcheck == 1){
+                            FILE *fp4 = fopen(listTitle, "a");
+                            printNodeFile(fp4, specific);
+                            fclose(fp4);
+                        }
+                        else{
+                            FILE *fp5 = fopen(listTitle, "w");
+                            printNodeFile(fp5, specific);
+                            fclose(fp5);
+                        }
+                    }
+                    else{
+                        printf("The title you searched for was not found\n");
+                    }
+                    resetCommand();
+                    promptInitial();
                 }
-                // else{
-                //     printf("Please enter 'Y' for yes and 'N' for no.\n");
-                //     printf("->");
-                //     scanf("%c", &c);
-                // }
             }
-            else{
-                printf("%s could not be found.\n", lookup);
+            else if(search == 34){
+                specific = searchSpecific(root, lookup);
+                if(specific != NULL){
+                    printNode(specific);
+                    printf("Is this ^ the movie you were looking for?\n");
+                    printf("Enter (1) for 'Yes'.\n");
+                    printf("Enter (2) for 'No'.\n");
+                    printf("->");
+                    scanf("%d", &yesOno);
+                    int nullcheck = -1;
+                    if(yesOno == 1){
+                        FILE *file34;
+                        if(file34 = fopen(listTitle, "r")){
+                            fclose(file34);
+                            nullcheck=1;
+                        }
+                        if(nullcheck == 1){
+                            FILE *fp2 = fopen(listTitle, "a");
+                            printNodeFile(fp2, specific);
+                            fclose(fp2);
+                        }
+                        else{
+                            FILE *fp3 = fopen(listTitle, "w");
+                            printNodeFile(fp3, specific);
+                            fclose(fp3);
+                        }
+                    }
+                    else{
+                        printf("The title you searched for was not found\n");
+                    }
+                }
+                resetCommand();
+                promptInitial();
             }
-            resetCommand();
-            promptSecond();
         }
         else if(command == 6){
             int hold;
@@ -260,6 +291,7 @@ int main(){
             command = 7;
         }
     }
+    preOrderFile(currLists);
 
 return 0;
 }

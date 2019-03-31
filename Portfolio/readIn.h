@@ -3,6 +3,6 @@
 
 #include "blankAVL.h"
 
-Node *readIn();
+Node *readIn(char []);
 
 #endif

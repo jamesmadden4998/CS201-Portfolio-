@@ -12,6 +12,8 @@ typedef struct node{
 	char releaseYear[10];
 	char runTime[500];
 	char genre[200];
+	// char digital[4];
+	// char dateAquired[12];
 	Node *left;
 	Node *right;
 	int height;
@@ -34,6 +36,10 @@ int max(int a, int b)
 	return (a > b)? a : b;
 }
 
+// int min(int a, int b){
+// 	return (a < b)? a:b;
+// }
+
 /* Helper function that allocates a new node with the given key and
 	NULL left and right pointers. */
 Node* newNode(char movie[], char release[], char rt[], char g[])
@@ -44,6 +50,8 @@ Node* newNode(char movie[], char release[], char rt[], char g[])
 	strcpy(node->releaseYear, release);
 	strcpy(node->runTime, rt);
 	strcpy(node->genre, g);
+
+
 
 	node->left = NULL;
 	node->right = NULL;
@@ -98,7 +106,7 @@ int getBalance(Node *N)
 }
 
 //takes an original string and creates a copy of that string but in all lowercase letters.
-char *LOW(char string[]){
+char *LOW(char *string){
 	if(string == NULL){
 		return NULL;
 	}
@@ -133,7 +141,7 @@ char *clipArticle(char title[]){
 		// printf("%s\n", tempString);
         return tempString;
 	}
-	else if(strncmp(title, "a", 1) == 0){
+	else if(strncmp(title, "a ", 2) == 0){
         for(a; a<strlen(title); a++){
 			tempString[a-2] = title[a];
 		}
@@ -169,7 +177,7 @@ Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
 		node->left = insert(node->left, movie, release, rt, genre);
 	}
 
-	else if (strcmp(tempMovie,tempNodeTitle) > 0){
+	else if (strcmp(tempMovie,tempNodeTitle) >= 0){
 		node->right = insert(node->right, movie, release, rt, genre);
 	}
 	/*else // Equal keys are not allowed in BST
@@ -225,14 +233,178 @@ Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
 	return node;
 }
 
+// Node *del(Node *tree, Node *delItem){
+//     if(tree == NULL)
+//         return tree;
+//     if(strcmp(delItem->title, tree->title) < 0)
+//         tree->left = del(tree->left, delItem);
+//     else if(strcmp(delItem->title, tree->title) > 0)
+//         tree->right = del(tree->right, delItem);
+//     else{
+//         Node *tempTree = tree;
+//         if((tree->left != NULL) && (tree->right != NULL)){
+//             Node *parent = tree->right;
+//             tree = parent->left;
+//             if (tree != NULL){
+//                 while(tree->left){
+//                     parent = tree;
+//                     tree = tree->left;
+//                 }
+//                 parent->left = tree->right;
+//                 tree->right = tempTree->right;
+//             }
+//             else
+//                 tree = parent;
+//             tree->left = tempTree->left;
+//         }
+//         else
+//             if(tree->left != NULL)
+//                 tree = tree->left;
+//             else
+//                 tree = tree->right;
+// 		// tempTree = NULL;
+// 		// free(tempTree->title);
+// 		// free(tempTree->releaseYear);
+// 		// free(tempTree->genre);
+// 		// free(tempTree->runTime);
+// 		free(tempTree);
+//     }
+// 	// int status;
+// 	// char tempRemove[200];
+// 	// strcpy(tempRemove, delItem->title);
+// 	// status = remove(tempRemove);
+// 	// if (status==0){
+// 	// 	printf("list was successfully deleted\n");
+// 	// }
+// 	// else{
+// 	// 	printf("list was not removed\n");
+// 	// 	// perror();
+// 	// }
+//     return tree;
+// }
+
+Node *minValueNode(Node* node){
+    Node* current = node;
+
+    /* loop down to find the leftmost leaf */
+    while (current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+
+Node* deleteNode(Node* node, Node *search){
+    // STEP 1: PERFORM STANDARD BST DELETE
+
+    if (node == NULL)
+        return node;
+
+	char tempSearch[200];
+	char tempNodeTitle[200];
+	if(LOW(node->title) != NULL){
+		strcpy(tempNodeTitle,LOW(node->title));
+		strcpy(tempNodeTitle,clipArticle(tempNodeTitle));
+	}
+	if(LOW(search->title) != NULL){
+		strcpy(tempSearch,LOW(search->title));
+		strcpy(tempSearch,clipArticle(tempSearch));
+	}
+
+
+    // If the key to be deleted is smaller than the
+    // root's key, then it lies in left subtree
+    if (strcmp(tempSearch, tempNodeTitle) < 0)
+        node->left = deleteNode(node->left, search);
+
+    // If the key to be deleted is greater than the
+    // root's key, then it lies in right subtree
+    else if(strcmp(tempSearch, tempNodeTitle) > 0)
+        node->right = deleteNode(node->right, search);
+
+    // if key is same as root's key, then This is
+    // the node to be deleted
+    else{
+        // node with only one child or no child
+        if((node->left == NULL) || (node->right == NULL)){
+			printf("In possibly c++ stuff\n");
+			Node *temp = node->left ? node->left : node->right;
+            // No child case
+            if (temp == NULL){
+                temp = node;
+                node = NULL;
+            }
+            // One child case// Copy the contents of the non-empty child
+			else{
+				strcpy(node->title, temp->title);
+			   	strcpy(node->releaseYear, temp->releaseYear);
+			   	strcpy(node->runTime, temp->runTime);
+			   	strcpy(node->genre, temp->genre);
+				printf("SHOUld BE HERE\n");
+				node->right = NULL;
+				node->left = NULL;
+		 	}
+        }
+        else{
+            // node with two children: Get the inorder
+            // successor (smallest in the right subtree)
+            Node* temp = minValueNode(node->right);
+
+            // Copy the inorder successor's data to this node
+            strcpy(node->title, temp->title);
+			strcpy(node->releaseYear, temp->releaseYear);
+			strcpy(node->runTime, temp->runTime);
+			strcpy(node->genre, temp->genre);
+            // Delete the inorder successor
+            node->right = deleteNode(node->right, temp);
+        }
+    }
+
+    // If the tree had only one node then return
+    if (node == NULL)
+      return node;
+
+    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+    node->height = 1 + max(height(node->left),
+                           height(node->right));
+
+    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
+    // check whether this node became unbalanced)
+    int balance = getBalance(node);
+
+    // If this node becomes unbalanced, then there are 4 cases
+
+    // Left Left Case
+    if (balance > 1 && getBalance(node->left) >= 0)
+        return rightRotate(node);
+
+    // Left Right Case
+    if (balance > 1 && getBalance(node->left) < 0){
+        node->left =  leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Right Right Case
+    if (balance < -1 && getBalance(node->right) <= 0)
+        return leftRotate(node);
+
+    // Right Left Case
+    if (balance < -1 && getBalance(node->right) > 0){
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    return node;
+}
+
 // A utility function to print preorder traversal
 // of the tree.
 // The function also prints height of every node
-void preOrder(Node *root)
-{
-	if(root != NULL)
-	{
-		printf("%s, ", root->title);
+void preOrder(Node *root){
+	if(root != NULL){
+		if(root->title[strlen(root->title)-1] == '\n')
+			printf("%s", root->title);
+		else
+			printf("%s\n", root->title);
 		preOrder(root->left);
 		preOrder(root->right);
 	}
@@ -240,36 +412,96 @@ void preOrder(Node *root)
 
 void printNode(Node *root);
 
-Node *searchFor(Node *root, char movie[]){
-	char *Movie = malloc(200 * sizeof(char));
-	char *NodeTitle = malloc(200*sizeof(char));
-	Movie = LOW(movie);
-	Movie = clipArticle(Movie);
-	NodeTitle = LOW(root->title);
-	NodeTitle = clipArticle(NodeTitle);
+Node *searchSpecific(Node *root, char movie[]){
+	Node *tempS = root;
+	if(tempS == NULL){
+		// printf("Returned Null\n");
+		return NULL;
+	}
+	char Movie[200];
+	char NodeTitle[200];
+	strcpy(Movie, LOW(movie));
+	strcpy(Movie,clipArticle(Movie));
+	strcpy(NodeTitle, LOW(tempS->title));
+	strcpy(NodeTitle, clipArticle(NodeTitle));
+	int two = strlen(NodeTitle);
+	NodeTitle[two] = '\0';
 
-	Node *temp = root;
 
-	if(temp == NULL){
-		return temp;
+	if(strcmp(Movie, NodeTitle) == 0){
+		return tempS;
 	}
-	else if (strcmp(Movie, NodeTitle) == 0){
-		return temp;
-   	}
-	else if(strcmp(Movie, NodeTitle) < 0){
-   		temp = searchFor(root->left, movie);
+	else{
+		if(strcmp(Movie, NodeTitle) < 0){
+			return searchSpecific(tempS->left, Movie);
+		}
+		else if(strcmp(Movie, NodeTitle) > 0){
+        	return searchSpecific(tempS->right, Movie);
+		}
 	}
-	else if(strcmp(Movie, NodeTitle) > 0){
-		temp = searchFor(root->right, movie);
+}
+
+int searchGeneral(Node *root, char movie[]){
+	Node *tempG = root;
+	char Movie2[200];
+	char *NodeTitle2 = malloc(200 * sizeof(char));
+	char NodeTitleR[200];
+	char NodeTitleL[200];
+	strcpy(Movie2, LOW(movie));
+	strcpy(Movie2, clipArticle(Movie2));
+	strcpy(NodeTitle2, LOW(tempG->title));
+	strcpy(NodeTitle2, clipArticle(NodeTitle2));
+
+	if(tempG == NULL){
+		printf("The database is empty\n");
+		return 0;
 	}
+	else if(strcmp(Movie2,NodeTitle2) == 0){
+		return 34;
+	}
+    else if(strncmp(Movie2, NodeTitle2, strlen(Movie2)) < 0 /*e < t->data*/ )
+    	searchGeneral(tempG->left, Movie2);
+    else if(strncmp(Movie2, NodeTitle2, strlen(Movie2)) > 0 /*e > t->data*/ )
+        searchGeneral(tempG->right, Movie2);
+    else{
+        printNode(tempG);
+		if(tempG->left != NULL)
+			searchGeneral(tempG->left, Movie2);
+		if(tempG->right != NULL)
+			searchGeneral(tempG->right, Movie2);
+	}
+
+
 
 }
 
+void preOrderFile(Node *lists){
+	if(lists != NULL){
+		remove("ListNames");
+		FILE *lastOp = fopen("replica.txt", "w");
+		char buffer[200];
+
+		strcpy(buffer, lists->title);
+		fprintf(lastOp, "%s\n", buffer);
+		fclose(lastOp);
+		preOrderFile(lists->left);
+		preOrderFile(lists->right);
+		rename("replica.txt", "ListNames");
+	}
+}
+
 void printNode(Node *root){
-	printf("Title: %s\n", root->title);
-    printf("\tRelease year: %s\n", root->releaseYear);
-    printf("\tRuntime: %s\n", root->runTime);
-    printf("\tGenre: %s\n", root->genre);
+	if(root != NULL){
+		printf("\nTitle: %s\n", root->title);
+		if(strcmp(root->genre, " ") != 0){
+			printf("\tRelease year: %s\n", root->releaseYear);
+	    	printf("\tRuntime: %s\n", root->runTime);
+	    	printf("\tGenre: %s\n", root->genre);
+		}
+	}
+	else{
+		printf("(null)\n");
+	}
 }
 
 void printNodeFile(FILE *fp, Node *root){

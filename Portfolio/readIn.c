@@ -5,52 +5,83 @@
 #include "readIn.h"
 #include "blankAVL.h"
 
-Node *readIn(){
+Node *readIn(char string[]){
     //stuff for reading
-    static const char filename[] = "movie_records2";
+    char filename[20];
+    strcpy(filename, string);
     char line[128]; /* or other suitable maximum line size */
-    FILE *file = fopen (filename, "r");
+    FILE *file = fopen(filename, "r");
 
     //variables for tokening
-    char split[2] = "\t";
-    char *token;
+    if(file){
+        if(strcmp(filename, "movie_records2") == 0){
+            Node *root = NULL;
+            char split[2] = "\t";
+            char *token;
 
-    char title[100];
-    char releaseYear[10];
-    char runTime[500];
-    char genre[200];
+            char title[100];
+            char releaseYear[10];
+            char runTime[500];
+            char genre[200];
 
-    Node *root = NULL;
 
-    int tokenCount = 1;
-    if (file != NULL){
-        while(fgets(line, sizeof(line), file) != NULL){
-            //fputs(line, stdout); /* write the line */
-            token = strtok(line, split);
-            while(token != NULL){
-                if(tokenCount == 3){
-                    strcpy(title,token);
-                    //printf(" %s\n", token);
+            int tokenCount = 1;
+            if (file != NULL){
+                while(fgets(line, sizeof(line), file) != NULL){
+                    //fputs(line, stdout); /* write the line */
+                    token = strtok(line, split);
+                    while(token != NULL){
+                        if(tokenCount == 3){
+                            strcpy(title,token);
+                            //printf(" %s\n", token);
+                        }
+                        else if(tokenCount == 6){
+                            strcpy(releaseYear,token);
+                        }
+                        else if(tokenCount == 8){
+                            strcpy(runTime,token);
+                        }
+                        else if(tokenCount == 9){
+                            strcpy(genre,token);
+                        }
+                        token = strtok(NULL, split);
+                        tokenCount++;
+                    }
+                    tokenCount = 1;
+                    root = insert(root, title, releaseYear, runTime, genre);
                 }
-                else if(tokenCount == 6){
-                    strcpy(releaseYear,token);
-                }
-                else if(tokenCount == 8){
-                    strcpy(runTime,token);
-                }
-                else if(tokenCount == 9){
-                    strcpy(genre,token);
-                }
-                token = strtok(NULL, split);
-                tokenCount++;
+                fclose(file);
             }
-            tokenCount = 1;
-            root = insert(root, title, releaseYear, runTime, genre);
+            else{
+                perror(filename); /* why didn't the file open? */
+            }
+            return root;
         }
-        fclose(file);
+        else if(strcmp(filename, "ListNames") == 0){
+            char clipNewLn[200];
+            char readin;
+            int i = 0;
+            Node *existingLists;
+
+            while(readin!=EOF){
+                readin = fgetc(file);
+                if(readin != '\n'){
+                    clipNewLn[i] = readin;
+                    i++;
+                }
+                else{
+                    clipNewLn[i] = '\0';
+                    i = 0;
+                    // printf("Created string: %s\n", clipNewLn);
+                    existingLists = insert(existingLists, clipNewLn, " ", " ", " ");
+                    strcpy(clipNewLn, " ");
+                }
+            }
+            fclose(file);
+            return existingLists;
+        }
     }
     else{
-        perror(filename); /* why didn't the file open? */
+        return NULL;
     }
-    return root;
 }
