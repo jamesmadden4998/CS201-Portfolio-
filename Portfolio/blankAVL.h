@@ -21,5 +21,7 @@ typedef struct node Node;
  char *clipArticle(char []);
  Node *del(Node *, Node *);
  Node *deleteNode(Node*, Node *);
+ void setDig(Node *, int);
+ void setDate(Node *, char []);
 
 #endif

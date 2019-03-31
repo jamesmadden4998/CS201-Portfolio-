@@ -10,14 +10,27 @@
 typedef struct node{
 	char title[200];
 	char releaseYear[10];
-	char runTime[500];
-	char genre[200];
-	// char digital[4];
-	// char dateAquired[12];
+	char runTime[5];
+	char genre[100];
+	char digital[4];
+	char dateAquired[12];
 	Node *left;
 	Node *right;
 	int height;
 }Node;
+
+void setDig(Node *node, int choice){
+	if(choice == 1){
+		strcpy(node->digital, "BR");
+	}
+	else if(choice == 2){
+		strcpy(node->digital, "DVD");
+	}
+}
+
+void setDate(Node *node, char date[]){
+	strcpy(node->dateAquired, date);
+}
 
 // A utility function to get maximum of two integers
 int max(int a, int b);
@@ -50,6 +63,8 @@ Node* newNode(char movie[], char release[], char rt[], char g[])
 	strcpy(node->releaseYear, release);
 	strcpy(node->runTime, rt);
 	strcpy(node->genre, g);
+	strcpy(node->digital, "n/a");
+	strcpy(node->dateAquired, "dd/mm/yyyy");
 
 
 
@@ -156,7 +171,6 @@ char *clipArticle(char title[]){
 // Recursive function to insert a key in the subtree rooted
 // with node and returns the new root of the subtree.
 Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
-
 	/* 1. Perform the normal BST insertion */
 	if (node == NULL)
 		return(newNode(movie, release, rt, genre));
@@ -177,7 +191,7 @@ Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
 		node->left = insert(node->left, movie, release, rt, genre);
 	}
 
-	else if (strcmp(tempMovie,tempNodeTitle) >= 0){
+	else if (strcmp(tempMovie,tempNodeTitle) > 0){
 		node->right = insert(node->right, movie, release, rt, genre);
 	}
 	/*else // Equal keys are not allowed in BST
@@ -233,56 +247,6 @@ Node* insert(Node* node, char movie[], char release[], char rt[], char genre[]){
 	return node;
 }
 
-// Node *del(Node *tree, Node *delItem){
-//     if(tree == NULL)
-//         return tree;
-//     if(strcmp(delItem->title, tree->title) < 0)
-//         tree->left = del(tree->left, delItem);
-//     else if(strcmp(delItem->title, tree->title) > 0)
-//         tree->right = del(tree->right, delItem);
-//     else{
-//         Node *tempTree = tree;
-//         if((tree->left != NULL) && (tree->right != NULL)){
-//             Node *parent = tree->right;
-//             tree = parent->left;
-//             if (tree != NULL){
-//                 while(tree->left){
-//                     parent = tree;
-//                     tree = tree->left;
-//                 }
-//                 parent->left = tree->right;
-//                 tree->right = tempTree->right;
-//             }
-//             else
-//                 tree = parent;
-//             tree->left = tempTree->left;
-//         }
-//         else
-//             if(tree->left != NULL)
-//                 tree = tree->left;
-//             else
-//                 tree = tree->right;
-// 		// tempTree = NULL;
-// 		// free(tempTree->title);
-// 		// free(tempTree->releaseYear);
-// 		// free(tempTree->genre);
-// 		// free(tempTree->runTime);
-// 		free(tempTree);
-//     }
-// 	// int status;
-// 	// char tempRemove[200];
-// 	// strcpy(tempRemove, delItem->title);
-// 	// status = remove(tempRemove);
-// 	// if (status==0){
-// 	// 	printf("list was successfully deleted\n");
-// 	// }
-// 	// else{
-// 	// 	printf("list was not removed\n");
-// 	// 	// perror();
-// 	// }
-//     return tree;
-// }
-
 Node *minValueNode(Node* node){
     Node* current = node;
 
@@ -326,10 +290,8 @@ Node* deleteNode(Node* node, Node *search){
     else{
         // node with only one child or no child
         if((node->left == NULL) || (node->right == NULL)){
-			printf("In possibly c++ stuff\n");
 			Node *temp = node->left ? node->left : node->right;
-            // No child case
-            if (temp == NULL){
+            if (temp == NULL){// No child case
                 temp = node;
                 node = NULL;
             }
@@ -339,7 +301,8 @@ Node* deleteNode(Node* node, Node *search){
 			   	strcpy(node->releaseYear, temp->releaseYear);
 			   	strcpy(node->runTime, temp->runTime);
 			   	strcpy(node->genre, temp->genre);
-				printf("SHOUld BE HERE\n");
+				strcpy(node->dateAquired, temp->dateAquired);
+				strcpy(node->digital, temp->digital);
 				node->right = NULL;
 				node->left = NULL;
 		 	}
@@ -354,6 +317,9 @@ Node* deleteNode(Node* node, Node *search){
 			strcpy(node->releaseYear, temp->releaseYear);
 			strcpy(node->runTime, temp->runTime);
 			strcpy(node->genre, temp->genre);
+			strcpy(node->dateAquired, temp->dateAquired);
+			strcpy(node->digital, temp->digital);
+
             // Delete the inorder successor
             node->right = deleteNode(node->right, temp);
         }
@@ -442,6 +408,9 @@ Node *searchSpecific(Node *root, char movie[]){
 }
 
 int searchGeneral(Node *root, char movie[]){
+	if(root == NULL){
+		return -1;
+	}
 	Node *tempG = root;
 	char Movie2[200];
 	char *NodeTitle2 = malloc(200 * sizeof(char));
@@ -477,8 +446,7 @@ int searchGeneral(Node *root, char movie[]){
 
 void preOrderFile(Node *lists){
 	if(lists != NULL){
-		remove("ListNames");
-		FILE *lastOp = fopen("replica.txt", "w");
+		FILE *lastOp = fopen("replica.txt", "a");
 		char buffer[200];
 
 		strcpy(buffer, lists->title);
@@ -486,10 +454,10 @@ void preOrderFile(Node *lists){
 		fclose(lastOp);
 		preOrderFile(lists->left);
 		preOrderFile(lists->right);
-		rename("replica.txt", "ListNames");
+		// remove("ListNames");
 	}
 }
-
+//prints a nodes details to the terminal
 void printNode(Node *root){
 	if(root != NULL){
 		printf("\nTitle: %s\n", root->title);
@@ -497,6 +465,8 @@ void printNode(Node *root){
 			printf("\tRelease year: %s\n", root->releaseYear);
 	    	printf("\tRuntime: %s\n", root->runTime);
 	    	printf("\tGenre: %s\n", root->genre);
+			printf("\tMedia Type: %s\n", root->digital);
+			printf("\tDate Purchased: %s\n", root->dateAquired);
 		}
 	}
 	else{
@@ -504,9 +474,14 @@ void printNode(Node *root){
 	}
 }
 
+//This prints a node and its contents to the passed file
+// Used for writing movie info to a list
 void printNodeFile(FILE *fp, Node *root){
 	fprintf(fp, "Title: %s\n", root->title);
     fprintf(fp, "\tRelease year: %s\n", root->releaseYear);
     fprintf(fp, "\tRuntime: %s\n", root->runTime);
-    fprintf(fp, "\tGenre: %s\n\n", root->genre);
+	root->genre[strlen(root->genre) - 1] = '\0';
+    fprintf(fp, "\tGenre: %s\n", root->genre);
+	fprintf(fp, "\tMedia Type: %s\n", root->digital);
+	fprintf(fp, "\tDate Purchased: %s\n\n", root->dateAquired);
 }

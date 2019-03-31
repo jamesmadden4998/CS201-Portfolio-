@@ -14,26 +14,22 @@ Node *readIn(char string[]){
 
     //variables for tokening
     if(file){
-        if(strcmp(filename, "movie_records2") == 0){
+        if(strcmp(filename, "movie_records") == 0){
             Node *root = NULL;
-            char split[2] = "\t";
             char *token;
 
             char title[100];
             char releaseYear[10];
-            char runTime[500];
-            char genre[200];
-
+            char runTime[5];
+            char genre[100];
 
             int tokenCount = 1;
             if (file != NULL){
                 while(fgets(line, sizeof(line), file) != NULL){
-                    //fputs(line, stdout); /* write the line */
-                    token = strtok(line, split);
+                    token = strtok(line, "\t");
                     while(token != NULL){
                         if(tokenCount == 3){
                             strcpy(title,token);
-                            //printf(" %s\n", token);
                         }
                         else if(tokenCount == 6){
                             strcpy(releaseYear,token);
@@ -42,9 +38,11 @@ Node *readIn(char string[]){
                             strcpy(runTime,token);
                         }
                         else if(tokenCount == 9){
+                            token[strlen(token) - 1] = '\0';//where the newline occurs in data set
                             strcpy(genre,token);
                         }
-                        token = strtok(NULL, split);
+                        // token = strtok(NULL, "\t");
+                        token = strtok(NULL, "\t");
                         tokenCount++;
                     }
                     tokenCount = 1;
@@ -57,7 +55,7 @@ Node *readIn(char string[]){
             }
             return root;
         }
-        else if(strcmp(filename, "ListNames") == 0){
+        else if(strcmp(filename, "ListNames.txt") == 0){
             char clipNewLn[200];
             char readin;
             int i = 0;
