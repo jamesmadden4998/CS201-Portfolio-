@@ -22,7 +22,7 @@
     
   Program Stipulations:
       
-      1) Name Lists Uniquely as the list search function only pulls up the first complete match.
+      1) Create your lists with unique names because the list search function only pulls up the first complete match. Also the search function is not case sensitive ("James.log" == "james.log").
       2) If the entered searchstring for a movie has multiple strncmp matches it will print them all, so dont be too general.
       3) Movie searches start from the beginning of the first non-article word that was entered.
       
