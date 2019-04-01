@@ -4,21 +4,20 @@
         
           This program takes a datafile from IMDB and reads it into an AVL tree.  
       The user then can create a ".log" file.  The user can now add a movie to that file, 
-      read the contents of that file, delete from a movie from that file, delete a file entirely, 
-      create or edit another file or view all files.  The user has the ability to update 
-      the Media Type in which they own the movie, and the Date Purchased for that movie.
-      The program writes the contents of each list to their files as things are deleted.
-      The program stores the existing ".log" file names in the file "ListNames.txt".
-      "ListNames.txt" is written to at the end of the program being run and 
-      read in at the begginning of the program being run. 
+      read the contents of that file, delete a movie from that file, delete a file entirely, 
+      create or edit another file or view all files.  When adding a movie to a ".log" file
+      the user has the ability to update the Media Type and the Date Purchased fields for that movie.
+      Media Type gives 3 options (BR, DVD, Dig), and the date field reads in a string which should be 
+      inputted in (mm/dd/yyyy) format.  The program writes the contents of each list to their files as things are deleted.
+      The program stores the existing ".log" file names in the file "ListNames.txt".  "ListNames.txt" is written to at the 
+      end of running the program and it is read in at the begginning of the program being run. 
       
         
-  Instructions for Compiling:
+  Instructions for Compiling/Initial run:
       
-      The link to find the file is "https://datasets.imdbws.com/", and I used the third link down titled "titles.basics.tsv.az".
-      In regards to thise file, within my make I use a line "grep "movie" data.tsv > movie_records". 
-      The "data.tsv" in that grep command was the name given to the unzipped version of "titles.basics.tsv.av" 
-      after using 7zip to unzip  the file.  Modify that wording to match the downloaded file on your computer.
+      The link to find the file is "https://datasets.imdbws.com/", and I used the third link down on that site titled   "titles.basics.tsv.az".
+      The file could also be retrieved through "wget https://datasets.imdbws.com/title.basics.tsv.gz"
+      In regards to this file, within my make I use a line "grep "movie" data.tsv > movie_records" and read from the "movie_records" file. 
     
   Program Stipulations:
       
