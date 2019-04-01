@@ -51,7 +51,7 @@ int main(){
     // clock_t t;
     // t = clock();
     Node *root;
-    root = readIn("movie_records2");//read in the data file and root becomes the root of the tree
+    root = readIn("movie_records");//read in the data file and root becomes the root of the tree
 
     Node *currLists;
     currLists = readIn("ListNames.txt");
@@ -148,10 +148,15 @@ int main(){
                 printf("->");
                 scanf("%d", &confirm);
                 if(confirm == 1){
-                    Node *temp = deleteNode(currLists, findList);
-                    if(deleteNode(currLists, findList) == NULL){
-                        remove("ListNames.txt");
+                    currLists = deleteNode(currLists, findList);
+                    // preOrder(temp);
+                    printf("\n\n\n");
+                    preOrder(currLists);
+                    printf("\n\n\n");
+                    // printNode(temp);
+                    if(currLists == NULL){
                         preOrderFile(currLists);
+                        remove("ListNames.txt");
                         currLists = readIn("ListNames.txt");
                     }
                     else{
