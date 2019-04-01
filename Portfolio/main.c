@@ -16,7 +16,7 @@ void promptInitial(){
     printf("Enter (9) to Exit program\n");
     printf("->");
     scanf(" %d", &command);
-    if(command > 3){
+    if(command > 3 && command != 9){
         command = 0;
     }
 }
@@ -41,8 +41,8 @@ void resetCommand(){
 int main(){
 
     Node *root;
-    clock_t t;
-    t = clock();
+    // clock_t t;
+    // t = clock();
     root = readIn("movie_records");
     // preOrder(root);
 
@@ -55,9 +55,9 @@ int main(){
     char arrayoflists[100][100];
     char errand;
 
-    t = clock() - t;
-    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-    printf("took %f seconds to execute \n", time_taken);
+    // t = clock() - t;
+    // double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+    // printf("took %f seconds to execute \n", time_taken);
     while(command != 9){
 
         if(command == 7 || command == 0){
@@ -152,7 +152,7 @@ int main(){
                     int status;
                 	status = remove(lookup);
                 	if (status==0){
-                		printf("list was successfully deleted\n");
+                		// printf("\nlist was successfully deleted\n");
                 	}
                 }
                 else{
@@ -173,15 +173,14 @@ int main(){
             if(fptr = fopen(listTitle, "r")){
                 nullcheck = 1;
             }
-            else
-                nullcheck = 0;
             if(nullcheck == 1){
+                printf("\n");
                 while(fgets(line, sizeof(line), fptr) != NULL){
                     printf("%s", line);
                 }
                 fclose(fptr);
             }
-            else if(nullcheck == 0){
+            else if(nullcheck == -1){
                 printf("\nlist is empty\n");
             }
             resetCommand();
@@ -246,35 +245,35 @@ int main(){
                         printf("The title you searched for was not found\n");
                     }
                     resetCommand();
-                    promptInitial();
+                    promptSecond();
                 }
             }
             else if(search == 34){
                 specific = searchSpecific(root, lookup);
                 if(specific != NULL){
                     printNode(specific);
-                    printf("Is this ^ the movie you were looking for?\n");
+                    printf("\nIs this ^ the movie you were looking for?\n");
                     printf("Enter (1) for 'Yes'.\n");
                     printf("Enter (2) for 'No'.\n");
                     printf("->");
                     scanf("%d", &yesOno);
                     int nullcheck = -1;
                     if(yesOno == 1){
-                        printf("Would you like to update this movie?\n");
+                        printf("\nWould you like to update this movie?\n");
                         printf("Enter (1) for 'Yes'.\n");
                         printf("Enter (2) for 'No'.\n");
                         printf("->");
                         scanf("%d", &yesOno);
                         if (yesOno == 1){
-                            printf("Enter (1) if you own this movie on Blu-Ray\n");
+                            printf("\nEnter (1) if you own this movie on Blu-Ray\n");
                             printf("Enter (2) if you own this movie on DVD\n");
                             printf("->");
                             int choice;
                             scanf("%d", &choice);
                             setDig(specific, choice);
-                            printf("Enter the date that you bought this movie: (DD/MM/YYY)\n->");
+                            printf("\nEnter the date that you bought this movie: (DD/MM/YYY)\n->");
                             char date[11];
-                            scanf(" %[^\n]s", date);
+                            scanf(" %10s", date);
                             setDate(specific, date);
                         }
                         FILE *file34;
@@ -294,11 +293,11 @@ int main(){
                         }
                     }
                     else{
-                        printf("The title you searched for was not found\n");
+                        printf("\nThe title you searched for was not found\n");
                     }
                 }
                 resetCommand();
-                promptInitial();
+                promptSecond();
             }
             else{
                 printf("The title you searched for was not found\n");
@@ -314,7 +313,7 @@ int main(){
             char readTitle[200];
             char readFile[207];
 
-            printf("Enter the title of the movie you wish to delete:\n->");
+            printf("\nEnter the title of the movie you wish to delete:\n->");
             scanf(" %[^\n]s", readTitle);
 
             strncat(buffTitle, readTitle, strlen(readTitle));
@@ -327,7 +326,7 @@ int main(){
                 strcpy(title, clipArticle(title));
                 strcpy(buffTitle, LOW(buffTitle));
                 strcpy(buffTitle, clipArticle(buffTitle));
-                if(strcmp(buffTitle, readFile) == 0){
+                if(strcmp(buffTitle, title) == 0){
                     hold = line + 6;
                     key = -20;
                 }

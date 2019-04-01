@@ -5,6 +5,7 @@
 #include "readIn.h"
 #include "blankAVL.h"
 
+//this function reads in the data file and the file containing list names to AVL trees
 Node *readIn(char string[]){
     //stuff for reading
     char filename[20];
