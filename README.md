@@ -1,4 +1,6 @@
 # CS201-Portfolio-IMDB DataBase 
+ 
+  Link to tutorial:  https://youtu.be/UiJB3aWgqdI
 
   Program Description:
         
