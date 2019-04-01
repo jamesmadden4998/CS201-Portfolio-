@@ -1,0 +1,2 @@
+jim.log
+james.log
