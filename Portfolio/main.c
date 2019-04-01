@@ -8,7 +8,7 @@
 #include "readIn.h"
 
 int command;
-
+// menu of operations to do to a list as a whole
 void promptInitial(){
     printf("\nEnter (1) to View all list titles.\n");
     printf("Enter (2) to Create or Edit a list.\n");
@@ -16,14 +16,15 @@ void promptInitial(){
     printf("Enter (9) to Exit program\n");
     printf("->");
     char menuBuff[3];
-    scanf(" %2[^\n]s", menuBuff);
-    command = menuBuff[0];
-    command = command - '0';
+    scanf(" %2[^\n]s", menuBuff);//catches if a alphabetical character was entered
+    command = menuBuff[0];//catches if a alphabetical character was entered
+    command = command - '0';//catches if a alphabetical character was entered
     if(command > 3 && command != 9){
+        printf("Invalid input... reprompting\n");//catches if a alphabetical character was entered
         command = 0;
     }
 }
-
+// menu for in-list operation
 void promptSecond(){
     printf("\nEnter (4) To View the contents of this list.\n");
     printf("Enter (5) to Add to this list.\n");
@@ -36,6 +37,7 @@ void promptSecond(){
     command = menuBuff[0];
     command = command - '0';
     if(command < 4){
+        printf("Invalid input... reprompting\n");
         command = 0;
     }
 }
@@ -46,11 +48,10 @@ void resetCommand(){
 
 int main(){
 
-    Node *root;
     // clock_t t;
     // t = clock();
-    root = readIn("movie_records2");
-    // preOrder(root);
+    Node *root;
+    root = readIn("movie_records2");//read in the data file and root becomes the root of the tree
 
     Node *currLists;
     currLists = readIn("ListNames.txt");
@@ -65,11 +66,12 @@ int main(){
     // double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
     // printf("took %f seconds to execute \n", time_taken);
     while(command != 9){
-
+        //resets to initial menu
         if(command == 7 || command == 0){
             resetCommand();
             promptInitial();
         }
+        //view all made lists
         else if(command == 1){
             int r = 0;
             if(currLists == NULL){
@@ -82,6 +84,7 @@ int main(){
             resetCommand();
             promptInitial();
         }
+        //create or edit a list
         else if(command == 2){
             int i;
             printf("\nEnter the title of the list you wish to Create or Edit.\n");
@@ -106,8 +109,8 @@ int main(){
                     promptSecond();//show menu again for command scan
                 }
                 else if(i == 2){
-                    resetCommand();
-                    promptInitial();
+                    resetCommand();//reset command to -1
+                    promptInitial();//show menu again for command scan
                 }
             }
             else if(foundList != NULL){
@@ -119,15 +122,16 @@ int main(){
                 printf("->");
                 scanf("%d", &i);
                 if(i == 1){
-                    resetCommand();
-                    promptSecond();
+                    resetCommand();//reset command to -1
+                    promptSecond();//show menu again for command scan
                 }
                 else{
-                    resetCommand();
-                    promptInitial();
+                    resetCommand();//reset command to -1
+                    promptInitial();//show menu again for command scan
                 }
             }
         }
+        //delete a list
         else if (command == 3){
             printf("\nEnter the the name of the list you wish to Delete:\n");
             printf("->");
@@ -144,10 +148,10 @@ int main(){
                 printf("->");
                 scanf("%d", &confirm);
                 if(confirm == 1){
-                    // printNode(temp);
-                    // Node *temp = deleteNode(currLists, findList);
+                    Node *temp = deleteNode(currLists, findList);
                     if(deleteNode(currLists, findList) == NULL){
                         remove("ListNames.txt");
+                        preOrderFile(currLists);
                         currLists = readIn("ListNames.txt");
                     }
                     else{
@@ -172,6 +176,7 @@ int main(){
             resetCommand();
             promptInitial();
         }
+        //display contents of a list
         else if(command == 4){
             char line[128];
             FILE *fptr;
@@ -192,6 +197,7 @@ int main(){
             resetCommand();
             promptSecond();
         }
+        //add movie to a list
         else if(command == 5){
             printf("\nEnter the title you want to search for:\n->");
             scanf(" %200[^\n]s", lookup);
@@ -199,7 +205,7 @@ int main(){
             int search;
             int yesOno = -1;
             Node *specific = NULL;
-            search = searchGeneral(root, lookup);
+            search = searchGeneral(root, lookup);//returns a 0 if the tree was searched to a (NULL) node and now "strcmp" == 0, but returns 34 if one does.//this lets me skip researching.
             if(search == 0){
                 printf("\nEnter the full Title of the movie you wish to add\n->");
                 scanf(" %200[^\n]s", lookup);
@@ -244,13 +250,13 @@ int main(){
                             fclose(fp);
                             nullcheck = 1;
                         }
-                        if(nullcheck == 1){
+                        if(nullcheck == 1){//prints to end of file if file already exists
                             FILE *fp4 = fopen(listTitle, "a");
                             printNodeFile(fp4, specific);
                             fclose(fp4);
                         }
                         else{
-                            FILE *fp5 = fopen(listTitle, "w");
+                            FILE *fp5 = fopen(listTitle, "w");//prints to a new file of the entered name if that file DNE already.
                             printNodeFile(fp5, specific);
                             fclose(fp5);
                         }
@@ -262,6 +268,7 @@ int main(){
                     promptSecond();
                 }
             }
+            //skip second search case like mentioned above
             else if(search == 34){
                 specific = searchSpecific(root, lookup);
                 if(specific != NULL){
@@ -329,6 +336,7 @@ int main(){
                 promptSecond();
             }
         }
+        //delete a movie and its contents from a list
         else if(command == 6){
             int hold;
             int line = 0;
@@ -340,7 +348,7 @@ int main(){
             printf("\nEnter the title of the movie you wish to delete:\n->");
             scanf(" %200[^\n]s", readTitle);
 
-            strncat(buffTitle, readTitle, strlen(readTitle));
+            strncat(buffTitle, readTitle, strlen(readTitle));// append "Title: " to beginning of entered title for easier compare
             FILE *old = fopen(listTitle, "r");
             FILE *new = fopen("replica.txt", "a");
             while(fgets(readFile, sizeof(readFile), old) != NULL){
@@ -371,12 +379,12 @@ int main(){
             resetCommand();
             promptSecond();
         }
-        else if (command != 1||2||3||4||5||6||7||8||9){
+        else if (command != 1||2||3||4||5||6||7||8||9){//catches if command != valid input
             printf("\nINVALID INPUT...returning to top...please enter 1-7 or 9\n\n");
             command = 7;
         }
     }
-    preOrderFile(currLists);
+    preOrderFile(currLists);//reprints the existing logs for persistence in future runs
     remove("ListNames.txt");
     rename("replica.txt", "ListNames.txt");
 

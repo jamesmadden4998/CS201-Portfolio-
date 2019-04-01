@@ -18,7 +18,7 @@ typedef struct node{
 	Node *right;
 	int height;
 }Node;
-
+//sets the digital field of the passed node to BR for (1) DVD for (2) and Digital for (3)
 void setDig(Node *node, int choice){
 	if(choice == 1){
 		strcpy(node->digital, "BR");
@@ -30,7 +30,7 @@ void setDig(Node *node, int choice){
 		strcpy(node->digital, "Digital");
 	}
 }
-
+//assigns the dateAquired field of a movie to the passed string (mm/dd/yy)
 void setDate(Node *node, char date[]){
 	strcpy(node->dateAquired, date);
 }
@@ -136,7 +136,7 @@ char *LOW(char *string){
 	temp[i] = '\0';
 	return temp;
 }
-
+//clips a leading article of any string if that article is "a", "and", or "the"
 char *clipArticle(char title[]){
 	int f = 4;
 	int a = 2;
@@ -381,7 +381,7 @@ void preOrder(Node *root){
 }
 
 void printNode(Node *root);
-
+//searches the database for a unique movie title
 Node *searchSpecific(Node *root, char movie[]){
 	Node *tempS = root;
 	if(tempS == NULL){
@@ -410,7 +410,7 @@ Node *searchSpecific(Node *root, char movie[]){
 		}
 	}
 }
-
+//searches through the database and returns the movies that match the strncmp of their title and what was entered
 int searchGeneral(Node *root, char movie[]){
 	if(root == NULL){
 		return 0;
@@ -447,7 +447,7 @@ int searchGeneral(Node *root, char movie[]){
 
 
 }
-
+//prints the contents of "currLists" to a file in preOrder format
 void preOrderFile(Node *lists){
 	if(lists != NULL){
 		FILE *lastOp = fopen("replica.txt", "a");
@@ -458,7 +458,6 @@ void preOrderFile(Node *lists){
 		fclose(lastOp);
 		preOrderFile(lists->left);
 		preOrderFile(lists->right);
-		// remove("ListNames");
 	}
 }
 //prints a nodes details to the terminal
@@ -474,7 +473,7 @@ void printNode(Node *root){
 		}
 	}
 	else{
-		printf("(null)\n");
+		printf("(null)\n"); //prints (null) if the passed node is null
 	}
 }
 

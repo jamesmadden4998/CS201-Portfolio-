@@ -13,9 +13,9 @@ Node *readIn(char string[]){
     char line[128]; /* or other suitable maximum line size */
     FILE *file = fopen(filename, "r");
 
-    //variables for tokening
-    if(file){
-        if(strcmp(filename, "movie_records2") == 0){
+
+    if(file){//file exists executes the following
+        if(strcmp(filename, "movie_records") == 0){//if the opened file was "movie_records" inputs it into an AVL tree
             Node *root = NULL;
             char *token;
 
@@ -42,12 +42,11 @@ Node *readIn(char string[]){
                             token[strlen(token) - 1] = '\0';//where the newline occurs in data set
                             strcpy(genre,token);
                         }
-                        // token = strtok(NULL, "\t");
                         token = strtok(NULL, "\t");
                         tokenCount++;
                     }
                     tokenCount = 1;
-                    root = insert(root, title, releaseYear, runTime, genre);
+                    root = insert(root, title, releaseYear, runTime, genre);//the portion where the tree gets built
                 }
                 fclose(file);
             }
@@ -56,7 +55,7 @@ Node *readIn(char string[]){
             }
             return root;
         }
-        else if(strcmp(filename, "ListNames.txt") == 0){
+        else if(strcmp(filename, "ListNames.txt") == 0){//if the file that was opened is "ListNames.txt" a tree is built of whateve is in that file;
             char clipNewLn[200];
             char readin;
             int i = 0;
@@ -71,7 +70,6 @@ Node *readIn(char string[]){
                 else{
                     clipNewLn[i] = '\0';
                     i = 0;
-                    // printf("Created string: %s\n", clipNewLn);
                     existingLists = insert(existingLists, clipNewLn, " ", " ", " ");
                     strcpy(clipNewLn, " ");
                 }
@@ -81,6 +79,6 @@ Node *readIn(char string[]){
         }
     }
     else{
-        return NULL;
+        return NULL;//if the file doesnt open return null.
     }
 }
