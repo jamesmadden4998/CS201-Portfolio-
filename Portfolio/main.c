@@ -15,7 +15,10 @@ void promptInitial(){
     printf("Enter (3) to Delete a list.\n");
     printf("Enter (9) to Exit program\n");
     printf("->");
-    scanf(" %d", &command);
+    char menuBuff[3];
+    scanf(" %2[^\n]s", menuBuff);
+    command = menuBuff[0];
+    command = command - '0';
     if(command > 3 && command != 9){
         command = 0;
     }
@@ -28,7 +31,10 @@ void promptSecond(){
     printf("Enter (7) to Select a different list.\n");
     printf("Enter (9) to exit program.\n");
     printf("->");
-    scanf(" %d", &command);
+    char menuBuff[3];
+    scanf(" %2[^\n]s", menuBuff);
+    command = menuBuff[0];
+    command = command - '0';
     if(command < 4){
         command = 0;
     }
@@ -43,7 +49,7 @@ int main(){
     Node *root;
     // clock_t t;
     // t = clock();
-    root = readIn("movie_records");
+    root = readIn("movie_records2");
     // preOrder(root);
 
     Node *currLists;
@@ -80,7 +86,7 @@ int main(){
             int i;
             printf("\nEnter the title of the list you wish to Create or Edit.\n");
             printf("->");
-            scanf(" %[^\n]s", listTitle);
+            scanf(" %150[^\n]s", listTitle);
             strcat(listTitle, ".log");
             Node *foundList;
             foundList = searchSpecific(currLists, listTitle);
@@ -125,7 +131,7 @@ int main(){
         else if (command == 3){
             printf("\nEnter the the name of the list you wish to Delete:\n");
             printf("->");
-            scanf(" %[^\n]s", lookup);
+            scanf(" %150[^\n]s", lookup);
             strcat(lookup, ".log");
             int confirm;
             Node *findList;
@@ -152,7 +158,7 @@ int main(){
                     int status;
                 	status = remove(lookup);
                 	if (status==0){
-                		// printf("\nlist was successfully deleted\n");
+                		printf("\nlist was successfully deleted\n");
                 	}
                 }
                 else{
@@ -188,7 +194,7 @@ int main(){
         }
         else if(command == 5){
             printf("\nEnter the title you want to search for:\n->");
-            scanf(" %[^\n]s", lookup);
+            scanf(" %200[^\n]s", lookup);
             printf("You entered: %s\n", lookup);
             int search;
             int yesOno = -1;
@@ -196,7 +202,7 @@ int main(){
             search = searchGeneral(root, lookup);
             if(search == 0){
                 printf("\nEnter the full Title of the movie you wish to add\n->");
-                scanf(" %[^\n]s", lookup);
+                scanf(" %200[^\n]s", lookup);
                 specific = searchSpecific(root, lookup);
                 if(specific != NULL){
                     printNode(specific);
@@ -204,25 +210,33 @@ int main(){
                     printf("Enter (1) for 'Yes'.\n");
                     printf("Enter (2) for 'No'.\n");
                     printf("->");
-                    scanf("%d", &yesOno);
+                    scanf(" %d", &yesOno);
                     int nullcheck = -1;
                     if(yesOno == 1){
-                        // int fileLine;
                         printf("\nWould you like to update this movie?\n");
                         printf("Enter (1) for 'Yes'.\n");
                         printf("Enter (2) for 'No'.\n");
                         printf("->");
                         scanf("%d", &yesOno);
                         if (yesOno == 1){
+                            int choice;
                             printf("\nEnter (1) if you own this movie on Blu-Ray\n");
                             printf("Enter (2) if you own this movie on DVD\n");
+                            printf("Enter (3) if you won a digital copy of this movie.\n");
                             printf("->");
-                            int choice;
                             scanf("%d", &choice);
+                            if(choice > 3 || choice<1){
+                                printf("\nEnter a 1,2 or 3!\n\n");
+                                printf("Enter (1) if you own this movie on Blu-Ray\n");
+                                printf("Enter (2) if you own this movie on DVD\n");
+                                printf("Enter (3) if you won a digital copy of this movie.\n");
+                                printf("->");
+                                scanf("%d", &choice);
+                            }
                             setDig(specific, choice);
                             printf("\nEnter the date that you bought this movie: (DD/MM/YYYY)\n->");
                             char date[11];
-                            scanf(" %[^\n]s", date);
+                            scanf(" %11[^\n]s", date);
                             setDate(specific, date);
                         }
                         FILE *fp;
@@ -265,11 +279,21 @@ int main(){
                         printf("->");
                         scanf("%d", &yesOno);
                         if (yesOno == 1){
+                            int choice;
                             printf("\nEnter (1) if you own this movie on Blu-Ray\n");
                             printf("Enter (2) if you own this movie on DVD\n");
+                            printf("Enter (3) if you own a digital copy of this movie\n");
                             printf("->");
-                            int choice;
                             scanf("%d", &choice);
+                            if(choice >3 || choice < 1){
+                                printf("\nEnter a 1,2 or 3!\n\n");
+                                printf("Enter (1) if you own this movie on Blu-Ray\n");
+                                printf("Enter (2) if you own this movie on DVD\n");
+                                printf("Enter (3) if you own a digital copy of this movie\n");
+                                printf("->");
+                                int choice;
+                                scanf("%d", &choice);
+                            }
                             setDig(specific, choice);
                             printf("\nEnter the date that you bought this movie: (DD/MM/YYY)\n->");
                             char date[11];
@@ -300,7 +324,7 @@ int main(){
                 promptSecond();
             }
             else{
-                printf("The title you searched for was not found\n");
+                printf("No titles were found\n");
                 resetCommand();
                 promptSecond();
             }
@@ -314,7 +338,7 @@ int main(){
             char readFile[207];
 
             printf("\nEnter the title of the movie you wish to delete:\n->");
-            scanf(" %[^\n]s", readTitle);
+            scanf(" %200[^\n]s", readTitle);
 
             strncat(buffTitle, readTitle, strlen(readTitle));
             FILE *old = fopen(listTitle, "r");

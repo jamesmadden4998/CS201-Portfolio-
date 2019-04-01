@@ -12,7 +12,7 @@ typedef struct node{
 	char releaseYear[10];
 	char runTime[5];
 	char genre[100];
-	char digital[4];
+	char digital[10];
 	char dateAquired[12];
 	Node *left;
 	Node *right;
@@ -25,6 +25,9 @@ void setDig(Node *node, int choice){
 	}
 	else if(choice == 2){
 		strcpy(node->digital, "DVD");
+	}
+	else if(choice == 3){
+		strcpy(node->digital, "Digital");
 	}
 }
 
@@ -305,6 +308,7 @@ Node* deleteNode(Node* node, Node *search){
 				strcpy(node->digital, temp->digital);
 				node->right = NULL;
 				node->left = NULL;
+				node->height = temp->height;
 		 	}
         }
         else{
@@ -409,7 +413,7 @@ Node *searchSpecific(Node *root, char movie[]){
 
 int searchGeneral(Node *root, char movie[]){
 	if(root == NULL){
-		return -1;
+		return 0;
 	}
 	Node *tempG = root;
 	char Movie2[200];
@@ -422,7 +426,7 @@ int searchGeneral(Node *root, char movie[]){
 	strcpy(NodeTitle2, clipArticle(NodeTitle2));
 
 	if(tempG == NULL){
-		printf("The database is empty\n");
+		// printf("The database is empty\n");
 		return 0;
 	}
 	else if(strcmp(Movie2,NodeTitle2) == 0){

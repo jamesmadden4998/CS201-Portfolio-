@@ -15,7 +15,7 @@ Node *readIn(char string[]){
 
     //variables for tokening
     if(file){
-        if(strcmp(filename, "movie_records") == 0){
+        if(strcmp(filename, "movie_records2") == 0){
             Node *root = NULL;
             char *token;
 
