@@ -36,3 +36,7 @@
          data file takes ~2 minutes.  The program executes in real time and all necessary running logic can be checked within a single
          running of the program.
       4) I chose to store the names of .log files in a tree as well.  It makes it easier to store them preOrdered in file "ListNames.txt".
+
+
+--AVL Tree was taken from...https://www.geeksforgeeks.org/avl-tree-set-1-insertion/
+--AVL Tree Deletion was taken from...https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
